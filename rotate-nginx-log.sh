@@ -9,4 +9,4 @@ sudo mkdir -p $DIR
 current_date_time=$(date "+%Y-%m-%d_%H-%M")
 sudo mv /var/log/nginx/access.log "${DIR}/nginx_${current_date_time}.txt"
 sudo rm -rf /var/log/nginx/access.log
-sudo systemctl reload nginx
+sudo systemctl restart nginx
