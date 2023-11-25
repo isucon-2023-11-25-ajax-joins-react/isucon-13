@@ -284,10 +284,19 @@ module Isupipe
         tx.xquery('INSERT INTO livestreams (user_id, title, description, playlist_url, thumbnail_url, start_at, end_at) VALUES(?, ?, ?, ?, ?, ?, ?)', user_id, req.title, req.description, req.playlist_url, req.thumbnail_url, req.start_at, req.end_at)
         livestream_id = tx.last_id
 
-	# タグ追加
+        # バルクインサートのための配列を初期化
+        values_array = []
+
+        # 各タグIDに対して値の組を配列に追加
         req.tags.each do |tag_id|
-          tx.xquery('INSERT INTO livestream_tags (livestream_id, tag_id) VALUES (?, ?)', livestream_id, tag_id)
+          values_array << "(?, ?)"
         end
+
+        # 配列を使って一度にバルクインサート
+        insert_query = "INSERT INTO livestream_tags (livestream_id, tag_id) VALUES #{values_array.join(', ')}"
+
+        # バルクインサートを実行
+        tx.xquery(insert_query, *([livestream_id] * req.tags.length + req.tags))
 
         fill_livestream_response(tx, {
           id: livestream_id,
