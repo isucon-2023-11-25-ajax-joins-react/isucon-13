@@ -19,3 +19,8 @@
 /home/isucon/webapp/*
 !/home/isucon/webapp/ruby/
 !/home/isucon/webapp/sql/
+
+!/etc/
+/etc/*
+!/etc/mysql/
+!/etc/nginx/
