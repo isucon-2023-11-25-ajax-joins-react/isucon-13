@@ -116,8 +116,8 @@ module Isupipe
 
         tags = tags_data.map do |tag_data|
           {
-            id: tag_data.fetch(:id),
-            name: tag_data.fetch(:name),
+    id: tag_data['id'],
+    name: tag_data['name']
           }
         end
 
