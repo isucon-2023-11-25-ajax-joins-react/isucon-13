@@ -59,7 +59,7 @@ CREATE TABLE `livestream_tags` (
   `livestream_id` BIGINT NOT NULL,
   `tag_id` BIGINT NOT NULL
 ) ENGINE=InnoDB CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
-CREATE INDEX livestream_livestream_tags ON livestream_tags(`livestream_id`);
+CREATE INDEX index_livestream_tags ON livestream_tags(`livestream_id`, `tag_id`);
 
 -- ライブ配信視聴履歴
 CREATE TABLE `livestream_viewers_history` (
