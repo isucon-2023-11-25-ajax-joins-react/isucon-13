@@ -732,7 +732,7 @@ module Isupipe
     FALLBACK_IMAGE = '../img/NoImage.jpg'
 
     get '/api/user/:username/icon' do
-      redis = Redis.new(host: 'localhost', port: 6379)
+      redis = Redis.new(host: '52.194.62.142', port: 6379)
       username = params[:username]
       cached_image = redis.get(username)
       if cached_image
