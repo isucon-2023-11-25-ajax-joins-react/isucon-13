@@ -106,16 +106,11 @@ module Isupipe
         owner_model = tx.xquery('SELECT * FROM users WHERE id = ?', livestream_model.fetch(:user_id)).first
         owner = fill_user_response(tx, owner_model)
 
-        tags_data = tx.xquery('
-          SELECT tags.id, tags.name
-          FROM livestream_tags
-          INNER JOIN tags ON livestream_tags.tag_id = tags.id
-          WHERE livestream_tags.livestream_id = ?', livestream_model.fetch(:id)).to_a
-
-        tags = tags_data.map do |tag_data|
+        tags = tx.xquery('SELECT tag_id FROM livestream_tags WHERE livestream_id = ?', livestream_model.fetch(:id)).map do |livestream_tag_model|
+          tag_model = tx.xquery('SELECT * FROM tags WHERE id = ?', livestream_tag_model.fetch(:tag_id)).first
           {
-    id: tag_data['id'],
-    name: tag_data['name']
+            id: tag_model.fetch(:id),
+            name: tag_model.fetch(:name),
           }
         end
 
