@@ -996,14 +996,18 @@ module Isupipe
         end
 
         # ランク算出
-        ranking = tx.xquery('SELECT * FROM livestreams').map do |livestream|
-          reactions = tx.xquery('SELECT COUNT(*) FROM livestreams l INNER JOIN reactions r ON l.id = r.livestream_id WHERE l.id = ?', livestream.fetch(:id), as: :array).first[0]
-
-          total_tips = tx.xquery('SELECT IFNULL(SUM(l2.tip), 0) FROM livestreams l INNER JOIN livecomments l2 ON l.id = l2.livestream_id WHERE l.id = ?', livestream.fetch(:id), as: :array).first[0]
-
-          score = reactions + total_tips
-          LivestreamRankingEntry.new(livestream_id: livestream.fetch(:id), score:)
+        ranking = tx.xquery('
+          SELECT
+            l.id,
+            (SELECT COUNT(*) FROM reactions r WHERE r.livestream_id = l.id) as reaction_count,
+            (SELECT IFNULL(SUM(lc.tip), 0) FROM livecomments lc WHERE lc.livestream_id = l.id) as total_tips
+          FROM
+            livestreams l
+        ').map do |livestream|
+          score = livestream.fetch(:reaction_count) + livestream.fetch(:total_tips)
+          LivestreamRankingEntry.new(livestream_id: livestream.fetch(:id), score: score)
         end
+
         ranking.sort_by! { |entry| [entry.score, entry.livestream_id] }
         ridx = ranking.rindex { |entry| entry.livestream_id == livestream_id }
         rank = ranking.size - ridx
