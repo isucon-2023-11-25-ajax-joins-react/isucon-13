@@ -6,7 +6,7 @@ if [ ! -e $DIR ]; then
   sudo mkdir $DIR
 fi
 
-cd $(dirname $0)/../
+cd $(dirname $0)/
 
 current_date_time=$(date "+%Y-%m-%d_%H-%M")
 file_name="${DIR}/slow-query_${current_date_time}.txt"
