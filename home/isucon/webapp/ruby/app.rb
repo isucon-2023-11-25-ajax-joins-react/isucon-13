@@ -112,7 +112,7 @@ module Isupipe
           SELECT tags.id, tags.name
           FROM livestream_tags
           INNER JOIN tags ON livestream_tags.tag_id = tags.id
-          WHERE livestream_tags.livestream_id = ?', livestream_model.fetch(:id))
+          WHERE livestream_tags.livestream_id = ?', livestream_model.fetch(:id)).to_a
 
         tags = tags_data.map do |tag_data|
           {
