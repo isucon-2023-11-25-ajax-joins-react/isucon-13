@@ -9,6 +9,8 @@ require 'open3'
 require 'securerandom'
 require 'sinatra/base'
 require 'sinatra/json'
+require 'redis'
+require 'json'
 
 module Isupipe
   class App < Sinatra::Base
@@ -726,21 +728,30 @@ module Isupipe
     FALLBACK_IMAGE = '../img/NoImage.jpg'
 
     get '/api/user/:username/icon' do
+      # Redisサーバーのアドレスとポートを指定
+      redis = Redis.new(host: 'localhost', port: 6379)
       username = params[:username]
+      cached_image = redis.get(username)
 
-      image = db_transaction do |tx|
-        user = tx.xquery('SELECT * FROM users WHERE name = ?', username).first
-        unless user
-          raise HttpError.new(404, 'not found user that has the given username')
-        end
-        tx.xquery('SELECT image FROM icons WHERE user_id = ?', user.fetch(:id)).first
-      end
-
-      content_type 'image/jpeg'
-      if image
-        image[:image]
+      if cached_image
+        content_type 'image/jpeg'
+        cached_image
       else
-        send_file FALLBACK_IMAGE
+        image = db_transaction do |tx|
+          user = tx.xquery('SELECT * FROM users WHERE name = ?', username).first
+          unless user
+            raise HttpError.new(404, 'not found user that has the given username')
+          end
+          tx.xquery('SELECT image FROM icons WHERE user_id = ?', user.fetch(:id)).first
+        end
+
+        if image
+          redis.setex(username, 3600, image[:image].to_json)
+          content_type 'image/jpeg'
+          image[:image]
+        else
+          send_file FALLBACK_IMAGE
+        end
       end
     end
 
