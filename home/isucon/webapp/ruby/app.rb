@@ -746,7 +746,7 @@ module Isupipe
         end
 
         if image
-          redis.setex(username,  3600,  image[:image].to_json)
+          redis.setex(username, 3600, image[:image].to_json)
           content_type 'image/jpeg'
           image[:image]
         else
