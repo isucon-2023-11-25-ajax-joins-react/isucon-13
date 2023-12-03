@@ -46,10 +46,10 @@ module Isupipe
 
       def connect_db
         Mysql2::Client.new(
-          host: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_ADDRESS', '127.0.0.1'),
+          host: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_ADDRESS', '192.168.0.12'),
           port: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_PORT', '3306').to_i,
           username: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_USER', 'isucon'),
-          password: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_PASSWORD', 'isucon'),
+          password: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_PASSWORD', 'password'),
           database: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_DATABASE', 'isupipe'),
           symbolize_keys: true,
           cast_booleans: true,
@@ -1011,7 +1011,6 @@ module Isupipe
           score = livestream.fetch(:reaction_count) + livestream.fetch(:total_tips)
           LivestreamRankingEntry.new(livestream_id: livestream.fetch(:id), score: score)
         end
-
         ranking.sort_by! { |entry| [entry.score, entry.livestream_id] }
         ridx = ranking.rindex { |entry| entry.livestream_id == livestream_id }
         rank = ranking.size - ridx
