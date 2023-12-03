@@ -49,7 +49,7 @@ module Isupipe
           host: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_ADDRESS', '192.168.0.12'),
           port: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_PORT', '3306').to_i,
           username: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_USER', 'isucon'),
-          password: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_PASSWORD', 'isucon'),
+          password: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_PASSWORD', 'password'),
           database: ENV.fetch('ISUCON13_MYSQL_DIALCONFIG_DATABASE', 'isupipe'),
           symbolize_keys: true,
           cast_booleans: true,
